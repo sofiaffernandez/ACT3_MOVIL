@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Button } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 
-export default function TaskListScreen() {
+export default function TaskListScreen({ navigation }) {
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
@@ -25,7 +26,7 @@ export default function TaskListScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Lista de Tareas</Text>
+      <Text style={styles.title}>Lista de tareas</Text>
       <FlatList
         data={tasks}
         keyExtractor={(item) => item.id}
@@ -34,6 +35,15 @@ export default function TaskListScreen() {
             <Text style={styles.taskName}>{item.name}</Text>
           </View>
         )}
+      />
+
+      {/* Stack Navigation */}
+      <Ionicons 
+        name="arrow-back" 
+        size={30} 
+        color="black" 
+        onPress={() => navigation.navigate('Agregar tarea')} 
+        style={styles.backIcon} 
       />
     </View>
   );
@@ -48,6 +58,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    marginLeft: 30,
   },
   taskContainer: {
     padding: 15,
@@ -59,5 +70,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
   },
+  backIcon: {
+    marginTop: 12, 
+    position: 'absolute', 
+    top: 10, 
+    left: 10, 
+  },
 });
-
