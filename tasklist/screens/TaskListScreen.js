@@ -1,27 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Button } from 'react-native';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
 
 export default function TaskListScreen({ navigation }) {
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await getDocs(collection(db, 'tasks'));
-        const tasksArray = response.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setTasks(tasksArray);
-      } catch (error) {
-        console.error('Error al obtener las tareas:', error);
-      }
-    };
+    const unsubscribe = onSnapshot(collection(db, 'tasks'), (snapshot) => {
+      const tasksArray = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setTasks(tasksArray);
+    });
 
-    fetchTasks();
+    return () => unsubscribe();
   }, []);
 
   return (
